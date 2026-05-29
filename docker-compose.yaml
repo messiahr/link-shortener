@@ -20,6 +20,8 @@ services:
       - DATABASE_URL=postgresql+psycopg://postgres:postgres@db:5432/tasks
     depends_on:
       - db
+    volumes:
+      - ./backend:/app
 
   frontend:
     build:
@@ -29,6 +31,8 @@ services:
       - "80:80"
     depends_on:
       - backend
+    volumes:
+      - ./frontend/app:/usr/share/nginx/html:ro
 
 volumes:
   postgres_data:

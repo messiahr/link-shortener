@@ -1,3 +1,5 @@
 FROM nginx:alpine
 
-COPY index.html /usr/share/nginx/html/
+WORKDIR /app
+
+COPY app/index.html /usr/share/nginx/html/

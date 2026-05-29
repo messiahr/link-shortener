@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Link Shortener</title>
+  </head>
+  <body>
+    <h1>Create Short Link</h1>
+
+    <label>Original URL</label>
+    <input type="text" id="url" placeholder="https:/example.com" />
+
+    <label>Custom Slug</label>
+    <input type="text" id="slug" placeholder="my-link" />
+
+    <button onclick="createLink()">Create</button>
+
+    <pre id="output"></pre>
+
+    <script>
+      async function createLink() {
+        const url = document.getElementById("url").value;
+        const slug = document.getElementById("slug").value;
+
+        const payload = {
+          original_url: url,
+          slug: slug,
+        };
+
+        try {
+          const res = await fetch("http://localhost:8000/links", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            throw new Error(data.detail || "Failed to create link");
+          }
+
+          document.getElementById("output").innerText = JSON.stringify(
+            data,
+            null,
+            2,
+          );
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+    </script>
+  </body>
+</html>

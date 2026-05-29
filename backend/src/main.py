@@ -1,9 +1,12 @@
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from starlette.responses import RedirectResponse
 
-from .db import Base, SessionLocal, engine
-from .models import Task
+from src.schemas.link_request import LinkRequest
+
+from .database.db import Base, SessionLocal, engine
+from .repositories.link_repo import LinkRepo
 
 Base.metadata.create_all(bind=engine)
 
@@ -26,16 +29,25 @@ def get_db():
         db.close()
 
 
-@app.post("/tasks")
-def create_task(title: str, db: Session = Depends(get_db)):
-    task = Task(title=title)
-    db.add(task)
-    db.commit()
-    db.refresh(task)
-    return task
+@app.post("/links")
+def create_link(link_request: LinkRequest, db: Session = Depends(get_db)):
+    repo = LinkRepo(db)
+
+    link = repo.save_link(link_request.original_url, link_request.slug)
+
+    return {
+        "original_url": link.original_url,
+        "slug": link.slug,
+    }
 
 
-@app.get("/tasks")
-def get_tasks(db: Session = Depends(get_db)):
-    tasks = db.query(Task).all()
-    return tasks
+@app.get("/{slug}")
+def get_link(slug: str, db: Session = Depends(get_db)):
+    repo = LinkRepo(db)
+
+    link = repo.get_link(slug)
+
+    if link is None:
+        raise ValueError(f"Link with slug {slug} not found")
+
+    return RedirectResponse(link.original_url)
