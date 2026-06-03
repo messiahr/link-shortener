@@ -3,10 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 
-from src.schemas.link_request import LinkRequest
-
+from .auth import get_current_user
 from .database.db import Base, SessionLocal, engine
 from .repositories.link_repo import LinkRepo
+from .schemas.link_request import LinkRequest
 
 Base.metadata.create_all(bind=engine)
 
@@ -30,10 +30,14 @@ def get_db():
 
 
 @app.post("/links")
-def create_link(link_request: LinkRequest, db: Session = Depends(get_db)):
+def create_link(
+    link_request: LinkRequest,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     repo = LinkRepo(db)
 
-    link = repo.save_link(link_request.original_url, link_request.slug)
+    link = repo.save_link(link_request.original_url, link_request.slug, user["id"])
 
     return {
         "original_url": link.original_url,

@@ -15,3 +15,5 @@ class LinkORM(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now()
     )
+
+    owner_id: Mapped[str] = mapped_column(String, nullable=False)

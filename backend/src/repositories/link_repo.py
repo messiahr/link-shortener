@@ -12,7 +12,7 @@ class AbstractLinkRepo(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def save_link(self, link: str, slug: str) -> Link:
+    def save_link(self, link: str, slug: str, id: str) -> Link:
         pass
 
 
@@ -35,12 +35,14 @@ class LinkRepo(AbstractLinkRepo):
             original_url=orm_link.original_url,
             slug=orm_link.slug,
             created_at=orm_link.created_at,
+            owner_id=orm_link.owner_id,
         )
 
-    def save_link(self, link: str, slug: str) -> Link:
+    def save_link(self, link: str, slug: str, id: str) -> Link:
         orm_link = LinkORM(
             original_url=link,
             slug=slug,
+            owner_id=id,
         )
         self.db.add(orm_link)
         self.db.commit()
@@ -50,4 +52,5 @@ class LinkRepo(AbstractLinkRepo):
             original_url=orm_link.original_url,
             slug=orm_link.slug,
             created_at=orm_link.created_at,
+            owner_id=orm_link.owner_id,
         )

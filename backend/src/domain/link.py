@@ -8,3 +8,4 @@ class Link:
     original_url: str
     slug: str
     created_at: datetime
+    owner_id: str
