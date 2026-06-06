@@ -21,3 +21,7 @@ dependencies = [
 dev = [
     "ruff>=0.15.15",
 ]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]  # errors, pyflakes, imports, bugbear
+ignore = ["E501"]              # example: ignore line length if needed

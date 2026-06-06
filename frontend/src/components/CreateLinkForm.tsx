@@ -6,8 +6,10 @@ export default function CreateLinkForm({ session }: { session: Session }) {
   const [url, setUrl] = useState("");
   const [slug, setSlug] = useState("");
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   async function createLink() {
-    const response = await fetch("http://localhost:8000/links", {
+    const response = await fetch(`${apiUrl}/links`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

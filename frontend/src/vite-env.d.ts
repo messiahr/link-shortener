@@ -8,6 +8,7 @@ interface ImportMetaEnv {
   readonly VITE_APP_TITLE: string;
   readonly VITE_SUPABASE_URL: string;
   readonly VITE_SUPABASE_PUBLISHABLE_KEY: string;
+  readonly VITE_API_URL: string;
 }
 
 interface ImportMeta {
