@@ -6,5 +6,5 @@ from pydantic import BaseModel, HttpUrl
 class LinkResponse(BaseModel):
     original_url: HttpUrl
     slug: str
-    id: int
+    owner_id: str
     created_at: datetime

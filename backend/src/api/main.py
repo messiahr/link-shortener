@@ -8,6 +8,7 @@ from ..schemas.link_request import LinkRequest
 from ..schemas.link_response import LinkResponse
 from .deps.auth import UserDep
 from .deps.db import DBSession
+from .deps.mapper import to_link_response
 
 Base.metadata.create_all(bind=engine)
 
@@ -36,7 +37,7 @@ def create_link(
         user_id=user.id,
     )
 
-    return LinkResponse.model_validate(link)
+    return to_link_response(link)
 
 
 @app.get("/links", response_model=list[LinkResponse])
@@ -46,9 +47,7 @@ def get_links_by_user(
 ):
     repo = LinkRepo(db)
 
-    return [
-        LinkResponse.model_validate(link) for link in repo.get_links_by_user(user.id)
-    ]
+    return [to_link_response(link) for link in repo.get_links_by_user(user.id)]
 
 
 @app.get("/{slug}")

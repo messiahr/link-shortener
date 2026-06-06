@@ -1,27 +1,38 @@
-import { useEffect, useState } from "react";
-import { supabase } from "./lib/supabase";
-import CreateLinkForm from "./components/CreateLinkForm";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import useSession from "./auth/useSession";
 import Login from "./components/Login";
+import CreateLinkForm from "./components/CreateLinkForm";
 import type { Session } from "@supabase/supabase-js";
 
+function ProtectedRoute({
+  session,
+  children,
+}: {
+  session: Session;
+  children: React.ReactNode;
+}) {
+  if (!session) {
+    return <Login />;
+  }
+  return children;
+}
+
 export default function App() {
-  const [session, setSession] = useState<Session | null>(null);
+  const session = useSession();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-    });
-
-    const { data } = supabase.auth.onAuthStateChange((_, session) => {
-      setSession(session);
-    });
-
-    return () => {
-      data.subscription.unsubscribe();
-    };
-  }, []);
-
-  if (!session) return <Login />;
-
-  return <CreateLinkForm session={session} />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute session={session}>
+              <CreateLinkForm session={session} />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
