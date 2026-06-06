@@ -33,10 +33,22 @@ def create_link(
     link = repo.save_link(
         original_url=str(link_request.original_url),
         slug=link_request.slug,
-        id=user.id,
+        user_id=user.id,
     )
 
     return LinkResponse.model_validate(link)
+
+
+@app.get("/links", response_model=list[LinkResponse])
+def get_links_by_user(
+    user: UserDep,
+    db: DBSession,
+):
+    repo = LinkRepo(db)
+
+    return [
+        LinkResponse.model_validate(link) for link in repo.get_links_by_user(user.id)
+    ]
 
 
 @app.get("/{slug}")
